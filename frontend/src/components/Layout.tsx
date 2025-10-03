@@ -1,9 +1,9 @@
 import { FC, ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { Coins, Home, Compass, LayoutDashboard } from 'lucide-react';
+import { Home, Compass, Moon, Sun } from 'lucide-react';
 import { APP_NAME } from '../config/constants';
+import { useEffect, useState } from 'react';
 
 interface LayoutProps {
   children: ReactNode;
@@ -11,61 +11,82 @@ interface LayoutProps {
 
 const Layout: FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { connected } = useWallet();
+  const navigate = useNavigate();
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme') as 'dark' | 'light' | null;
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const enableDark = saved ? saved === 'dark' : prefersDark;
+    setIsDark(enableDark);
+    document.documentElement.classList.toggle('dark', enableDark);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle('dark', next);
+    localStorage.setItem('theme', next ? 'dark' : 'light');
+  };
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
     { path: '/explore', label: 'Explore', icon: Compass },
-    ...(connected ? [{ path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }] : []),
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-transparent sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="bg-gradient-to-br from-primary-500 to-primary-700 p-2 rounded-lg">
-                <Coins className="h-6 w-6 text-white" />
+          <div className="my-3 bg-white backdrop-blur rounded-2xl border border-gray-200 shadow-md">
+            <div className="flex items-center justify-between h-14 px-3 sm:px-4">
+              {/* Left: Logo */}
+              <Link to="/" className="flex items-center space-x-2">
+                <img src="/logo.svg" alt="Logo" className="h-7 w-7" />
+                <span className="text-xl sm:text-2xl font-semibold tracking-tight text-gray-900">{APP_NAME}</span>
+              </Link>
+
+              {/* Center: Nav */}
+              <nav className="hidden md:flex items-center">
+                <div className="flex items-center gap-2">
+                  {[{ path: '/', label: 'Home' }, { path: '/dashboard', label: 'Creator' }, { path: '/explore', label: 'Explore' }].map((item) => {
+                    const isActive = location.pathname === item.path;
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                          isActive
+                            ? 'bg-white text-gray-900 shadow-[0_0_15px_rgba(14,165,233,0.4)]'
+                            : 'text-gray-700 hover:bg-gray-50 hover:shadow-[0_0_10px_rgba(14,165,233,0.2)]'
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </nav>
+
+              {/* Right: Toggle + Wallet */}
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={toggleTheme}
+                  className="hidden md:inline-flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  aria-label="Toggle theme"
+                  title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                >
+                  {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </button>
+                <WalletMultiButton />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-                {APP_NAME}
-              </span>
-            </Link>
-
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`flex items-center space-x-2 text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'text-primary-600'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Wallet Button */}
-            <div className="flex items-center space-x-4">
-              <WalletMultiButton />
             </div>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden border-t border-gray-200">
+        <div className="md:hidden border-t border-gray-200 dark:border-gray-800">
           <nav className="flex justify-around py-2">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -77,7 +98,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
                   className={`flex flex-col items-center space-y-1 px-3 py-2 ${
                     isActive
                       ? 'text-primary-600'
-                      : 'text-gray-600'
+                      : 'text-gray-600 dark:text-gray-300'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -85,6 +106,12 @@ const Layout: FC<LayoutProps> = ({ children }) => {
                 </Link>
               );
             })}
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex flex-col items-center space-y-1 px-3 py-2 text-gray-600 dark:text-gray-300"
+            >
+              <span className="text-xs font-medium">Creator</span>
+            </button>
           </nav>
         </div>
       </header>
@@ -100,7 +127,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Coins className="h-6 w-6" />
+                <img src="/logo.svg" alt="Logo" className="h-6 w-6" />
                 <span className="text-xl font-bold">{APP_NAME}</span>
               </div>
               <p className="text-gray-400 text-sm">
