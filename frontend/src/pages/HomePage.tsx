@@ -1,18 +1,49 @@
-import { FC } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { ArrowRight, Zap, Shield, Coins, Globe } from 'lucide-react';
+import { Zap, Shield, Coins } from 'lucide-react';
 
 const HomePage: FC = () => {
   const { connected } = useWallet();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const scrolled = window.pageYOffset;
+        const parallax = scrolled * 0.5;
+        containerRef.current.style.transform = `translateY(${parallax}px)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className="space-y-20">
+    <div className="relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-white dark:bg-gray-900"></div>
+        
+        {/* Blue tint overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-900/30 dark:to-transparent"></div>
+        
+        {/* Clean Blue Orbs - Only scroll parallax */}
+        <div ref={containerRef} className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 dark:bg-blue-500/50 rounded-full blur-3xl"></div>
+          <div className="absolute top-40 right-20 w-96 h-96 bg-blue-500/15 dark:bg-blue-400/40 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-40 left-1/4 w-80 h-80 bg-blue-600/10 dark:bg-blue-300/35 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-1/3 w-64 h-64 bg-blue-300/25 dark:bg-blue-600/45 rounded-full blur-3xl"></div>
+        </div>
+      </div>
+
+      <div className="relative space-y-20">
       {/* Hero Section */}
       <section className="bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center space-y-8">
-            <h1 className="text-5xl lg:text-7xl font-semibold leading-tight tracking-tight text-gray-900 dark:text-white">
+            <h1 className="text-5xl lg:text-7xl font-arial leading-tight tracking-tight text-gray-900 dark:text-white">
               Support creators.
               <br />
               Simple. Fast. On Solana.
@@ -23,7 +54,6 @@ const HomePage: FC = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <Link to="/explore" className="btn btn-primary px-8 py-4 text-base">
                 Explore creators
-                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               {connected && (
                 <Link to="/dashboard" className="btn btn-outline px-8 py-4 text-base">
@@ -36,102 +66,106 @@ const HomePage: FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-semibold mb-3 text-gray-900 dark:text-white">Why Sosiol?</h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300">Built for the future of the creator economy</p>
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl lg:text-5xl font-light mb-6 text-gray-900 dark:text-white">Why Sosiol?</h2>
+          <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">Built for the future of the creator economy</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          <div className="card text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full mb-3">
-              <Zap className="h-7 w-7 text-gray-900 dark:text-white" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="text-center group">
+            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-[0_8px_30px_rgba(14,165,233,0.3)] group-hover:shadow-[0_12px_40px_rgba(14,165,233,0.4)] transition-all duration-300">
+              <Zap className="h-8 w-8 text-white" />
             </div>
-            <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">Lightning fast</h3>
-            <p className="text-gray-600 dark:text-gray-300">Solana speed with minimal fees.</p>
+            <h3 className="text-2xl font-medium mb-4 text-gray-900 dark:text-white">Lightning fast</h3>
+            <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">Solana speed with minimal fees. Transactions complete in seconds, not minutes.</p>
           </div>
 
-          <div className="card text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full mb-3">
-              <Shield className="h-7 w-7 text-gray-900 dark:text-white" />
+          <div className="text-center group">
+            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-[0_8px_30px_rgba(34,197,94,0.3)] group-hover:shadow-[0_12px_40px_rgba(34,197,94,0.4)] transition-all duration-300">
+              <Shield className="h-8 w-8 text-white" />
             </div>
-            <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">Secure</h3>
-            <p className="text-gray-600 dark:text-gray-300">Self-custody wallets. You stay in control.</p>
+            <h3 className="text-2xl font-medium mb-4 text-gray-900 dark:text-white">Secure</h3>
+            <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">Self-custody wallets. You stay in complete control of your funds.</p>
           </div>
 
-          <div className="card text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full mb-3">
-              <Coins className="h-7 w-7 text-gray-900 dark:text-white" />
+          <div className="text-center group">
+            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-[0_8px_30px_rgba(168,85,247,0.3)] group-hover:shadow-[0_12px_40px_rgba(168,85,247,0.4)] transition-all duration-300">
+              <Coins className="h-8 w-8 text-white" />
             </div>
-            <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">Stable payments</h3>
-            <p className="text-gray-600 dark:text-gray-300">Use USDC to avoid volatility.</p>
-          </div>
-
-          <div className="card text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full mb-3">
-              <Globe className="h-7 w-7 text-gray-900 dark:text-white" />
-            </div>
-            <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">Global access</h3>
-            <p className="text-gray-600 dark:text-gray-300">Support creators anywhere in the world.</p>
+            <h3 className="text-2xl font-medium mb-4 text-gray-900 dark:text-white">Stable payments</h3>
+            <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">Use USDC to avoid volatility. Your support maintains its value.</p>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="bg-gray-50 dark:bg-[#0f1620] py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-semibold mb-3 text-gray-900 dark:text-white">How it works</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">Simple, transparent, and powerful</p>
+      <section className="py-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-light mb-6 text-gray-900 dark:text-white">How it works</h2>
+            <p className="text-xl text-gray-500 dark:text-gray-400">Simple, transparent, and powerful</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-8 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-600 text-white rounded-full text-2xl font-bold mb-4">
-                1
+          <div className="space-y-16">
+            <div className="flex flex-col md:flex-row items-center gap-12">
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-[0_8px_30px_rgba(14,165,233,0.3)]">
+                  <span className="text-2xl font-bold text-white">1</span>
+                </div>
               </div>
-              <h3 className="text-xl font-bold mb-2">Connect Wallet</h3>
-              <p className="text-gray-600">
-                Use Phantom, Slope, or any Solana wallet to get started
-              </p>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-3xl font-medium mb-4 text-gray-900 dark:text-white">Connect Wallet</h3>
+                <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
+                  Use Phantom, Slope, or any Solana wallet to get started. Your keys, your crypto.
+                </p>
+              </div>
             </div>
 
-            <div className="bg-white rounded-xl p-8 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-600 text-white rounded-full text-2xl font-bold mb-4">
-                2
+            <div className="flex flex-col md:flex-row-reverse items-center gap-12">
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-3xl flex items-center justify-center shadow-[0_8px_30px_rgba(34,197,94,0.3)]">
+                  <span className="text-2xl font-bold text-white">2</span>
+                </div>
               </div>
-              <h3 className="text-xl font-bold mb-2">Find Creators</h3>
-              <p className="text-gray-600">
-                Browse and discover amazing creators to support
-              </p>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-3xl font-medium mb-4 text-gray-900 dark:text-white">Find Creators</h3>
+                <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
+                  Browse and discover amazing creators to support. From artists to educators.
+                </p>
+              </div>
             </div>
 
-            <div className="bg-white rounded-xl p-8 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-600 text-white rounded-full text-2xl font-bold mb-4">
-                3
+            <div className="flex flex-col md:flex-row items-center gap-12">
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-[0_8px_30px_rgba(168,85,247,0.3)]">
+                  <span className="text-2xl font-bold text-white">3</span>
+                </div>
               </div>
-              <h3 className="text-xl font-bold mb-2">Support with USDC</h3>
-              <p className="text-gray-600">
-                Send tips or subscribe with stable cryptocurrency
-              </p>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-3xl font-medium mb-4 text-gray-900 dark:text-white">Support with USDC</h3>
+                <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
+                  Send tips or subscribe with stable cryptocurrency. No volatility, just value.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="bg-gray-900 rounded-2xl p-12 text-center text-white">
-          <h2 className="text-3xl lg:text-4xl font-semibold mb-3">Ready to get started?</h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-16 text-center text-white shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
+          <h2 className="text-4xl lg:text-5xl font-light mb-6">Ready to get started?</h2>
+          <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
             Join the next generation of creator economy powered by Solana.
           </p>
-          <Link to="/explore" className="btn btn-primary px-8 py-4 text-base inline-flex items-center">
+          <Link to="/explore" className="btn btn-primary px-10 py-4 text-lg inline-flex items-center shadow-[0_8px_30px_rgba(14,165,233,0.4)] hover:shadow-[0_12px_40px_rgba(14,165,233,0.5)]">
             Explore creators
-            <ArrowRight className="ml-2 h-5 w-5" />
           </Link>
         </div>
       </section>
+      </div>
     </div>
   );
 };
