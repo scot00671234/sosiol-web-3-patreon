@@ -1,11 +1,12 @@
 [phases.setup]
-nixPkgs = ["nodejs-18_x", "openssl"]
+nixPkgs = ["nodejs-18_x", "openssl", "python3", "gcc", "gnumake", "pkg-config", "libusb1"]
+aptPkgs = ["build-essential", "libudev-dev"]
 
 [phases.install]
 cmds = [
   "npm install --workspaces=false",
   "cd backend && npm install",
-  "cd frontend && npm install"
+  "cd frontend && npm install --legacy-peer-deps"
 ]
 
 [phases.build]
