@@ -21,8 +21,8 @@ model Creator {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  tipsReceived        Tip[]     @relation("CreatorTips", fields: [], references: [])
-  subscriptions       Subscription[]
+  tipsReceived        Tip[]          @relation("CreatorTips")
+  subscriptions       Subscription[] @relation("CreatorSubscriptions")
 }
 
 model Tip {
@@ -34,6 +34,8 @@ model Tip {
   message                String?
   status                 TipStatus @default(pending)
   createdAt              DateTime  @default(now())
+
+  creator                Creator?  @relation("CreatorTips", fields: [toCreatorWallet], references: [walletAddress])
 }
 
 model Subscription {
@@ -50,6 +52,8 @@ model Subscription {
   lastTransactionSignature String?
   createdAt                DateTime        @default(now())
   updatedAt                DateTime        @updatedAt
+
+  creator                  Creator?       @relation("CreatorSubscriptions", fields: [creatorWallet], references: [walletAddress])
 }
 
 enum TipStatus {
