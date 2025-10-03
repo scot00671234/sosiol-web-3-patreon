@@ -155,7 +155,6 @@ const CreatorPage: FC = () => {
                 />
                 <SubscribeButton
                   creatorWallet={creator.walletAddress}
-                  creatorName={creator.displayName}
                   tiers={creator.subscriptionTiers}
                   currentSubscription={currentSubscription}
                   onSuccess={() => {
