@@ -4,7 +4,6 @@ import { Loader2, Users, DollarSign, TrendingUp, Settings, Plus, Trash2 } from '
 import toast from 'react-hot-toast';
 import { creatorAPI } from '../utils/api';
 import BackgroundGlare from '../components/BackgroundGlare';
-import { signMessage } from '../utils/solana';
 import bs58 from 'bs58';
 
 interface DashboardStats {

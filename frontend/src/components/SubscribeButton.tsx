@@ -16,7 +16,6 @@ interface SubscriptionTier {
 
 interface SubscribeButtonProps {
   creatorWallet: string;
-  creatorName: string;
   tiers: SubscriptionTier[];
   currentSubscription?: any;
   onSuccess?: () => void;
@@ -24,7 +23,6 @@ interface SubscribeButtonProps {
 
 const SubscribeButton: FC<SubscribeButtonProps> = ({
   creatorWallet,
-  creatorName,
   tiers,
   currentSubscription,
   onSuccess,
