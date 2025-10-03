@@ -7,6 +7,7 @@ import { creatorAPI, subscriptionAPI } from '../utils/api';
 import { formatWalletAddress } from '../utils/solana';
 import TipButton from '../components/TipButton';
 import SubscribeButton from '../components/SubscribeButton';
+import BackgroundGlare from '../components/BackgroundGlare';
 
 interface Creator {
   _id: string;
@@ -99,6 +100,7 @@ const CreatorPage: FC = () => {
   }
 
   return (
+    <BackgroundGlare>
     <div className="min-h-screen">
       {/* Cover Image */}
       <div className="h-64 bg-gradient-to-br from-primary-500 to-primary-700">
@@ -235,6 +237,7 @@ const CreatorPage: FC = () => {
         )}
       </div>
     </div>
+    </BackgroundGlare>
   );
 };
 

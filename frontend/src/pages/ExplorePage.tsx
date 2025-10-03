@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { creatorAPI } from '../utils/api';
 import CreatorCard from '../components/CreatorCard';
+import BackgroundGlare from '../components/BackgroundGlare';
 
 interface Creator {
   _id: string;
@@ -53,6 +54,7 @@ const ExplorePage: FC = () => {
   };
 
   return (
+    <BackgroundGlare>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Header */}
       <div className="mb-8">
@@ -95,6 +97,7 @@ const ExplorePage: FC = () => {
         </div>
       )}
     </div>
+    </BackgroundGlare>
   );
 };
 

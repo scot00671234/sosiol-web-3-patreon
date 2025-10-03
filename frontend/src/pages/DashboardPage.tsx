@@ -3,6 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Loader2, Users, DollarSign, TrendingUp, Settings, Plus, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { creatorAPI } from '../utils/api';
+import BackgroundGlare from '../components/BackgroundGlare';
 import { signMessage } from '../utils/solana';
 import bs58 from 'bs58';
 
@@ -166,25 +167,30 @@ const DashboardPage: FC = () => {
 
   if (!publicKey) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <h1 className="text-4xl font-arial mb-4">Connect Your Wallet</h1>
-        <p className="text-xl text-gray-600">
-          Please connect your Solana wallet to access the dashboard
-        </p>
-      </div>
+      <BackgroundGlare>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <h1 className="text-4xl font-arial mb-4">Connect Your Wallet</h1>
+          <p className="text-xl text-gray-600">
+            Please connect your Solana wallet to access the dashboard
+          </p>
+        </div>
+      </BackgroundGlare>
     );
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-12 w-12 animate-spin text-primary-600" />
-      </div>
+      <BackgroundGlare>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-12 w-12 animate-spin text-primary-600" />
+        </div>
+      </BackgroundGlare>
     );
   }
 
   if (isEditingProfile || !dashboardData) {
     return (
+      <BackgroundGlare>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">
@@ -404,10 +410,12 @@ const DashboardPage: FC = () => {
           </div>
         </div>
       </div>
+      </BackgroundGlare>
     );
   }
 
   return (
+    <BackgroundGlare>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
@@ -529,6 +537,7 @@ const DashboardPage: FC = () => {
         )}
       </div>
     </div>
+    </BackgroundGlare>
   );
 };
 

@@ -2,6 +2,7 @@ import { FC, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Zap, Shield, Coins } from 'lucide-react';
+import BackgroundGlare from '../components/BackgroundGlare';
 
 const HomePage: FC = () => {
   const { connected } = useWallet();
@@ -21,24 +22,8 @@ const HomePage: FC = () => {
   }, []);
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-white dark:bg-gray-900"></div>
-        
-        {/* Blue tint overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-900/30 dark:to-transparent"></div>
-        
-        {/* Clean Blue Orbs - Only scroll parallax */}
-        <div ref={containerRef} className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 dark:bg-blue-500/50 rounded-full blur-3xl"></div>
-          <div className="absolute top-40 right-20 w-96 h-96 bg-blue-500/15 dark:bg-blue-400/40 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-40 left-1/4 w-80 h-80 bg-blue-600/10 dark:bg-blue-300/35 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-1/3 w-64 h-64 bg-blue-300/25 dark:bg-blue-600/45 rounded-full blur-3xl"></div>
-        </div>
-      </div>
-
-      <div className="relative space-y-20">
+    <BackgroundGlare>
+      <div className="space-y-20">
       {/* Hero Section */}
       <section className="bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
@@ -166,7 +151,7 @@ const HomePage: FC = () => {
         </div>
       </section>
       </div>
-    </div>
+    </BackgroundGlare>
   );
 };
 
