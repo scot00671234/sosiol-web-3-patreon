@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Creator {
+  id                  Int       @id @default(autoincrement())
+  walletAddress       String    @unique
+  username            String    @unique
+  displayName         String
+  bio                 String    @default("")
+  avatarUrl           String    @default("")
+  coverImageUrl       String    @default("")
+  subscriptionTiers   Json      @default("[]")
+  totalTipsReceived   Float     @default(0)
+  totalSubscribers    Int       @default(0)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  tipsReceived        Tip[]     @relation("CreatorTips", fields: [], references: [])
+  subscriptions       Subscription[]
+}
+
+model Tip {
+  id                     Int       @id @default(autoincrement())
+  fromWallet             String
+  toCreatorWallet        String
+  amountUSDC             Float
+  transactionSignature   String    @unique
+  message                String?
+  status                 TipStatus @default(pending)
+  createdAt              DateTime  @default(now())
+}
+
+model Subscription {
+  id                       Int            @id @default(autoincrement())
+  fanWallet                String
+  creatorWallet            String
+  tierId                   String
+  tierName                 String
+  priceUSDC                Float
+  status                   SubscriptionStatus @default(active)
+  startDate                DateTime         @default(now())
+  nextPaymentDate          DateTime
+  lastPaymentDate          DateTime?
+  lastTransactionSignature String?
+  createdAt                DateTime        @default(now())
+  updatedAt                DateTime        @updatedAt
+}
+
+enum TipStatus {
+  pending
+  completed
+  failed
+}
+
+enum SubscriptionStatus {
+  active
+  cancelled
+  expired
+}
+
+

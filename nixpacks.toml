@@ -1,0 +1,22 @@
+[phases.setup]
+nixPkgs = ["nodejs-18_x", "openssl"]
+
+[phases.install]
+cmds = [
+  "npm install --workspaces=false",
+  "cd backend && npm install",
+  "cd frontend && npm install"
+]
+
+[phases.build]
+cmds = [
+  "cd backend && npx prisma generate && npm run build",
+  "cd frontend && npm run build"
+]
+
+[start]
+cmd = "cd backend && npx prisma migrate deploy && npm start"
+
+[variables]
+NODE_ENV = "production"
+
