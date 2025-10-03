@@ -4,7 +4,6 @@ aptPkgs = ["build-essential", "libudev-dev"]
 
 [phases.install]
 cmds = [
-  "npm install --workspaces=false",
   "cd backend && npm install",
   "cd frontend && npm install --legacy-peer-deps"
 ]
