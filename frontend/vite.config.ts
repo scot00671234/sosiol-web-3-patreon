@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { Buffer } from 'buffer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,12 +21,24 @@ export default defineConfig({
       },
     },
   },
+  define: {
+    'process.env': {},
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['buffer'],
+  },
   build: {
     outDir: 'dist',
     sourcemap: true,
-  },
-  define: {
-    'process.env': {},
+    rollupOptions: {
+      external: [],
+      output: {
+        globals: {
+          Buffer: 'Buffer',
+        },
+      },
+    },
   },
 });
 
