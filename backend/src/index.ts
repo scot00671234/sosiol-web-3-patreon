@@ -20,8 +20,8 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN || '*',
   credentials: true
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
@@ -68,6 +68,7 @@ try {
 }
 
 app.use(express.static(publicPath));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Handle React routing - serve index.html for all non-API routes
 app.get('*', (req: Request, res: Response) => {

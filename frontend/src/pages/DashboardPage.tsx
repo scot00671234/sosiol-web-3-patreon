@@ -3,6 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Loader2, Users, DollarSign, TrendingUp, Settings, Plus, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { creatorAPI } from '../utils/api';
+import { uploadAPI } from '../utils/uploadAPI';
 import BackgroundGlare from '../components/BackgroundGlare';
 import AvatarUpload from '../components/AvatarUpload';
 import BannerSelector from '../components/BannerSelector';
@@ -106,10 +107,15 @@ const DashboardPage: FC = () => {
       // Handle avatar file upload
       let finalAvatarUrl = profileForm.avatarUrl;
       if (avatarFile) {
-        // For now, we'll use the preview URL (data URL)
-        // In production, you'd upload to cloud storage and get a real URL
-        finalAvatarUrl = avatarPreview || profileForm.avatarUrl;
-        toast.loading('Processing avatar upload...', { id: toastId });
+        toast.loading('Uploading avatar...', { id: toastId });
+        try {
+          finalAvatarUrl = await uploadAPI.uploadAvatar(avatarFile);
+          toast.loading('Saving profile...', { id: toastId });
+        } catch (uploadError) {
+          console.error('Error uploading avatar:', uploadError);
+          toast.error('Failed to upload avatar. Using existing image.', { id: toastId });
+          // Continue with existing avatar URL if upload fails
+        }
       }
 
       // Save profile
