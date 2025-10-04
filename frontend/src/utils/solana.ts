@@ -162,6 +162,6 @@ export function formatWalletAddress(address: string, chars: number = 4): string 
 export async function signMessage(message: string, wallet: any): Promise<string> {
   const encodedMessage = new TextEncoder().encode(message);
   const signature = await wallet.signMessage(encodedMessage);
-  return Buffer.from(signature).toString('base64');
+  return btoa(String.fromCharCode(...signature));
 }
 
