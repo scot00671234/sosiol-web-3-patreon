@@ -22,4 +22,5 @@ cmd = "cd backend && npx prisma migrate deploy && npm start"
 [variables]
 NODE_ENV = "production"
 CORS_ORIGIN = "https://sosiol.com"
+DATABASE_URL = "postgresql://postgres:postgres@lynxier-database-sdlorl:5432/postgres?schema=public"
 
