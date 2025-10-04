@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import creatorRoutes from './routes/creator';
 import tipRoutes from './routes/tip';
@@ -25,11 +26,19 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Routes
+// API Routes
 app.use('/api/creators', creatorRoutes);
 app.use('/api/tips', tipRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/transactions', transactionRoutes);
+
+// Serve static files from the frontend build
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Handle React routing - serve index.html for all non-API routes
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
 // Prisma Client
 export const prisma = new PrismaClient();

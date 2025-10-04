@@ -45,7 +45,7 @@ RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
-EXPOSE 5000
+EXPOSE 3000
 
 ENV NODE_ENV=production
 

@@ -23,10 +23,10 @@ services:
     container_name: sosiol-backend
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "5000:3000"
     environment:
       - NODE_ENV=production
-      - PORT=5000
+      - PORT=3000
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sosiol?schema=public
       - SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
       - SOLANA_NETWORK=mainnet-beta
