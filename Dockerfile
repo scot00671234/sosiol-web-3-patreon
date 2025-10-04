@@ -1,4 +1,4 @@
-# Multi-stage build for production
+g# Multi-stage build for production
 
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
