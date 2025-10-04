@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { API_URL } from '../config/constants';
 
+console.log('API utility initialized with URL:', API_URL);
+
 const api = axios.create({
   baseURL: API_URL,
   timeout: 30000,
