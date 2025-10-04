@@ -14,7 +14,10 @@ router.get('/', async (req: Request, res: Response) => {
     res.json(creators);
   } catch (error) {
     console.error('Error fetching creators:', error);
-    res.status(500).json({ error: 'Failed to fetch creators' });
+    res.status(500).json({ 
+      error: 'Failed to fetch creators',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
@@ -35,7 +38,10 @@ router.get('/username/:username',
       res.json(creator);
     } catch (error) {
       console.error('Error fetching creator:', error);
-      res.status(500).json({ error: 'Failed to fetch creator' });
+      res.status(500).json({ 
+        error: 'Failed to fetch creator',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   }
 );
@@ -50,7 +56,10 @@ router.get('/wallet/:walletAddress', async (req: Request, res: Response) => {
     res.json(creator);
   } catch (error) {
     console.error('Error fetching creator:', error);
-    res.status(500).json({ error: 'Failed to fetch creator' });
+    res.status(500).json({ 
+      error: 'Failed to fetch creator',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
@@ -107,7 +116,10 @@ router.post('/',
       res.json(creator);
     } catch (error) {
       console.error('Error creating/updating creator:', error);
-      res.status(500).json({ error: 'Failed to create/update creator' });
+      res.status(500).json({ 
+        error: 'Failed to create/update creator',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   }
 );
@@ -167,7 +179,10 @@ router.get('/:walletAddress/dashboard', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error fetching dashboard:', error);
-    res.status(500).json({ error: 'Failed to fetch dashboard' });
+    res.status(500).json({ 
+      error: 'Failed to fetch dashboard',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 

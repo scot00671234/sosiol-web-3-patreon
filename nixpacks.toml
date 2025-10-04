@@ -11,7 +11,7 @@ cmds = [
 [phases.build]
 cmds = [
   "cd backend && npx prisma generate && npm run build",
-  "cd frontend && VITE_API_URL=https://sosiol.com/api VITE_SOLANA_NETWORK=mainnet-beta VITE_SOLANA_RPC_URL=https://api.mainnet-beta.solana.com VITE_USDC_MINT=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v npm run build",
+  "cd frontend && VITE_API_URL=https://sosiol.com/api VITE_SOLANA_NETWORK=mainnet-beta VITE_SOLANA_RPC_URL=https://solana-api.projectserum.com VITE_USDC_MINT=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v npm run build",
   "mkdir -p public && cp -r frontend/dist/* public/",
   "echo 'Directory structure after build:' && ls -la && echo 'Public directory contents:' && ls -la public/"
 ]
@@ -23,4 +23,5 @@ cmd = "cd backend && npx prisma migrate deploy && npm start"
 NODE_ENV = "production"
 CORS_ORIGIN = "https://sosiol.com"
 DATABASE_URL = "postgresql://postgres:postgres@lynxier-database-sdlorl:5432/postgres?schema=public"
+SOLANA_RPC_URL = "https://solana-api.projectserum.com"
 
