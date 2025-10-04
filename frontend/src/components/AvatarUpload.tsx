@@ -1,5 +1,5 @@
 import { FC, useRef, useState } from 'react';
-import { Upload, X, User } from 'lucide-react';
+import { X, User } from 'lucide-react';
 
 interface AvatarUploadProps {
   currentAvatarUrl?: string;
