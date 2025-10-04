@@ -12,6 +12,7 @@ import { USDC_MINT, USDC_DECIMALS, SOLANA_RPC_URL } from '../config/constants';
  * Get Solana connection
  */
 export function getConnection(): Connection {
+  console.log('Using Solana RPC URL:', SOLANA_RPC_URL);
   return new Connection(SOLANA_RPC_URL, 'confirmed');
 }
 
@@ -76,7 +77,13 @@ export async function createUSDCTransferTransaction(
   );
 
   // Check if recipient token account exists
-  const toTokenAccountInfo = await connection.getAccountInfo(toTokenAccount);
+  let toTokenAccountInfo;
+  try {
+    toTokenAccountInfo = await connection.getAccountInfo(toTokenAccount);
+  } catch (error) {
+    console.warn('Could not check recipient token account, assuming it needs to be created:', error);
+    toTokenAccountInfo = null;
+  }
   
   if (!toTokenAccountInfo) {
     // Create associated token account for recipient
@@ -106,9 +113,14 @@ export async function createUSDCTransferTransaction(
   );
 
   // Get recent blockhash
-  const { blockhash } = await connection.getLatestBlockhash();
-  transaction.recentBlockhash = blockhash;
-  transaction.feePayer = fromWallet;
+  try {
+    const { blockhash } = await connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = fromWallet;
+  } catch (error) {
+    console.error('Error getting latest blockhash:', error);
+    throw new Error('Failed to get latest blockhash. Please try again.');
+  }
 
   return transaction;
 }

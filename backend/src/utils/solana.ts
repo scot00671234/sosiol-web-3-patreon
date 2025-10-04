@@ -3,7 +3,7 @@ import bs58 from 'bs58';
 import nacl from 'tweetnacl';
 
 const SOLANA_NETWORK = (process.env.SOLANA_NETWORK || 'mainnet-beta') as 'mainnet-beta' | 'devnet' | 'testnet';
-const SOLANA_RPC_URL = process.env.SOLANA_RPC_URL || 'https://solana-api.projectserum.com';
+const SOLANA_RPC_URL = process.env.SOLANA_RPC_URL || 'https://rpc.ankr.com/solana';
 const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
 
 export const USDC_MINT = new PublicKey(
