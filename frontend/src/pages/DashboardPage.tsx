@@ -4,6 +4,8 @@ import { Loader2, Users, DollarSign, TrendingUp, Settings, Plus, Trash2 } from '
 import toast from 'react-hot-toast';
 import { creatorAPI } from '../utils/api';
 import BackgroundGlare from '../components/BackgroundGlare';
+import AvatarUpload from '../components/AvatarUpload';
+import BannerSelector from '../components/BannerSelector';
 import bs58 from 'bs58';
 
 interface DashboardStats {
@@ -31,6 +33,8 @@ const DashboardPage: FC = () => {
   });
   const [subscriptionTiers, setSubscriptionTiers] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (publicKey) {
@@ -99,13 +103,22 @@ const DashboardPage: FC = () => {
       const signatureBytes = await walletSignMessage(encodedMessage);
       const signature = bs58.encode(signatureBytes);
 
+      // Handle avatar file upload
+      let finalAvatarUrl = profileForm.avatarUrl;
+      if (avatarFile) {
+        // For now, we'll use the preview URL (data URL)
+        // In production, you'd upload to cloud storage and get a real URL
+        finalAvatarUrl = avatarPreview || profileForm.avatarUrl;
+        toast.loading('Processing avatar upload...', { id: toastId });
+      }
+
       // Save profile
       await creatorAPI.create({
         walletAddress: publicKey.toString(),
         username: profileForm.username,
         displayName: profileForm.displayName,
         bio: profileForm.bio,
-        avatarUrl: profileForm.avatarUrl,
+        avatarUrl: finalAvatarUrl,
         coverImageUrl: profileForm.coverImageUrl,
         subscriptionTiers,
         message,
@@ -162,6 +175,19 @@ const DashboardPage: FC = () => {
     const updated = [...subscriptionTiers];
     updated[tierIndex].benefits = updated[tierIndex].benefits.filter((_: any, i: number) => i !== benefitIndex);
     setSubscriptionTiers(updated);
+  };
+
+  const handleAvatarChange = (file: File | null, previewUrl: string | null) => {
+    setAvatarFile(file);
+    setAvatarPreview(previewUrl);
+    // Update the form with the preview URL for immediate display
+    if (previewUrl) {
+      setProfileForm({ ...profileForm, avatarUrl: previewUrl });
+    }
+  };
+
+  const handleBannerChange = (bannerUrl: string) => {
+    setProfileForm({ ...profileForm, coverImageUrl: bannerUrl });
   };
 
   if (!publicKey) {
@@ -249,29 +275,17 @@ const DashboardPage: FC = () => {
                 </p>
               </div>
 
-              <div>
-                <label className="label">Avatar URL</label>
-                <input
-                  type="url"
-                  placeholder="https://..."
-                  value={profileForm.avatarUrl}
-                  onChange={(e) => setProfileForm({ ...profileForm, avatarUrl: e.target.value })}
-                  className="input"
-                />
-              </div>
+              <AvatarUpload
+                currentAvatarUrl={profileForm.avatarUrl}
+                onAvatarChange={handleAvatarChange}
+                disabled={saving}
+              />
 
-              <div>
-                <label className="label">Cover Image URL</label>
-                <input
-                  type="url"
-                  placeholder="https://..."
-                  value={profileForm.coverImageUrl}
-                  onChange={(e) =>
-                    setProfileForm({ ...profileForm, coverImageUrl: e.target.value })
-                  }
-                  className="input"
-                />
-              </div>
+              <BannerSelector
+                currentBannerUrl={profileForm.coverImageUrl}
+                onBannerChange={handleBannerChange}
+                disabled={saving}
+              />
             </div>
           </div>
 

@@ -8,6 +8,7 @@ import creatorRoutes from './routes/creator';
 import tipRoutes from './routes/tip';
 import subscriptionRoutes from './routes/subscription';
 import transactionRoutes from './routes/transaction';
+import uploadRoutes from './routes/upload';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use('/api/creators', creatorRoutes);
 app.use('/api/tips', tipRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Serve static files from the frontend build
 // In nixpacks: backend runs from /app/backend/, so we need to go up to /app/ then into public/
