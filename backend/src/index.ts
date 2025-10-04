@@ -33,11 +33,19 @@ app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/transactions', transactionRoutes);
 
 // Serve static files from the frontend build
-app.use(express.static(path.join(__dirname, '../public')));
+const publicPath = path.join(__dirname, '../public');
+console.log('📁 Serving static files from:', publicPath);
+app.use(express.static(publicPath));
 
 // Handle React routing - serve index.html for all non-API routes
 app.get('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+  const indexPath = path.join(__dirname, '../public/index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).json({ error: 'Frontend not available' });
+    }
+  });
 });
 
 // Prisma Client
