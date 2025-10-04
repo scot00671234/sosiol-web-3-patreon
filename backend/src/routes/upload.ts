@@ -31,7 +31,7 @@ const upload = multer({
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed!'), false);
+      cb(new Error('Only image files are allowed!'));
     }
   }
 });
@@ -58,6 +58,19 @@ router.post('/avatar', upload.single('avatar'), (req: Request, res: Response) =>
     console.error('Error uploading avatar:', error);
     res.status(500).json({ error: 'Failed to upload avatar' });
   }
+});
+
+// Error handling middleware for multer
+router.use((error: any, req: Request, res: Response, next: any) => {
+  if (error instanceof multer.MulterError) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File too large. Maximum size is 5MB.' });
+    }
+  }
+  if (error.message === 'Only image files are allowed!') {
+    return res.status(400).json({ error: 'Only image files are allowed!' });
+  }
+  next(error);
 });
 
 // Get uploaded file
