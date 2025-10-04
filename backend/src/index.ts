@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import creatorRoutes from './routes/creator';
 import tipRoutes from './routes/tip';
@@ -35,6 +36,16 @@ app.use('/api/transactions', transactionRoutes);
 // Serve static files from the frontend build
 const publicPath = path.join(__dirname, '../public');
 console.log('📁 Serving static files from:', publicPath);
+console.log('🔍 Checking if public directory exists...');
+
+// Check if the directory exists and list its contents
+try {
+  const files = fs.readdirSync(publicPath);
+  console.log('📂 Public directory contents:', files);
+} catch (err) {
+  console.error('❌ Public directory not found or not accessible:', err);
+}
+
 app.use(express.static(publicPath));
 
 // Handle React routing - serve index.html for all non-API routes
