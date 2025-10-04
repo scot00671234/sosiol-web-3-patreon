@@ -35,7 +35,6 @@ const DashboardPage: FC = () => {
   const [subscriptionTiers, setSubscriptionTiers] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (publicKey) {
@@ -185,7 +184,6 @@ const DashboardPage: FC = () => {
 
   const handleAvatarChange = (file: File | null, previewUrl: string | null) => {
     setAvatarFile(file);
-    setAvatarPreview(previewUrl);
     // Update the form with the preview URL for immediate display
     if (previewUrl) {
       setProfileForm({ ...profileForm, avatarUrl: previewUrl });
