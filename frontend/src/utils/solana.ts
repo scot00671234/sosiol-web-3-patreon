@@ -33,8 +33,8 @@ export function lamportsToUsdc(lamports: number): number {
  * Get or create associated token account
  */
 export async function getOrCreateAssociatedTokenAccount(
-  connection: Connection,
-  payer: PublicKey,
+  const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
+  const payer = Keypair.generate();
   mint: PublicKey,
   owner: PublicKey
 ): Promise<PublicKey> {
