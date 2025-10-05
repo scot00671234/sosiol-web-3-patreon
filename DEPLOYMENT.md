@@ -293,7 +293,7 @@ Required for production:
 
 ```env
 # Server
-PORT=5000
+PORT=3000
 NODE_ENV=production
 
 # Database
