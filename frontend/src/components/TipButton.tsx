@@ -58,14 +58,20 @@ const TipButton: FC<TipButtonProps> = ({ creatorWallet, creatorName, onSuccess }
         transactionSignature: signature,
         message: message || undefined,
       });
-      await tipAPI.create({
-        fromWallet: publicKey.toString(),
-        toCreatorWallet: creatorWallet,
-        amountUSDC: amount,
-        transactionSignature: signature,
-        message: message || undefined,
-      });
-      console.log('Tip recorded successfully');
+      
+      try {
+        const response = await tipAPI.create({
+          fromWallet: publicKey.toString(),
+          toCreatorWallet: creatorWallet,
+          amountUSDC: amount,
+          transactionSignature: signature,
+          message: message || undefined,
+        });
+        console.log('Tip recorded successfully:', response.data);
+      } catch (apiError) {
+        console.error('Error recording tip in backend:', apiError);
+        toast.error('Tip sent but failed to record in database. Please contact support.');
+      }
 
       toast.success(`Successfully sent ${amount} USDC to ${creatorName}!`, { id: toastId });
       setIsOpen(false);
