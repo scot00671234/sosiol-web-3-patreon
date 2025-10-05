@@ -64,40 +64,6 @@ const DashboardPage: FC = () => {
     }
   };
 
-  // Manual tip recording for testing
-  const recordManualTip = async () => {
-    if (!publicKey) return;
-    
-    const amount = prompt('Enter tip amount (e.g., 0.01):');
-    if (!amount) return;
-    
-    const signature = prompt('Enter transaction signature:');
-    if (!signature) return;
-    
-    try {
-      const response = await fetch('/api/tips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fromWallet: 'Manual Entry',
-          toCreatorWallet: publicKey.toString(),
-          amountUSDC: parseFloat(amount),
-          transactionSignature: signature,
-          message: 'Manual entry for testing'
-        })
-      });
-      
-      if (response.ok) {
-        toast.success('Tip recorded manually');
-        loadDashboard();
-      } else {
-        toast.error('Failed to record tip');
-      }
-    } catch (error) {
-      console.error('Error recording manual tip:', error);
-      toast.error('Failed to record tip');
-    }
-  };
 
 
 
@@ -524,12 +490,6 @@ const DashboardPage: FC = () => {
             className="btn btn-secondary flex items-center space-x-2"
           >
             <span>Check Wallet</span>
-          </button>
-          <button
-            onClick={recordManualTip}
-            className="btn btn-secondary flex items-center space-x-2"
-          >
-            <span>Record Tip</span>
           </button>
           <button
             onClick={() => setIsEditingProfile(true)}

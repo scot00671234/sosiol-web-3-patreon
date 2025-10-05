@@ -50,27 +50,41 @@ const TipButton: FC<TipButtonProps> = ({ creatorWallet, creatorName, onSuccess }
       // Wait for confirmation
       await connection.confirmTransaction(signature, 'confirmed');
 
-      // Record tip in backend
-      console.log('Recording tip in backend:', {
+      // Record tip in backend - SIMPLIFIED APPROACH
+      console.log('Payment successful! Recording tip:', {
         fromWallet: publicKey.toString(),
         toCreatorWallet: creatorWallet,
         amountUSDC: amount,
         transactionSignature: signature,
-        message: message || undefined,
       });
       
-      try {
-        const response = await tipAPI.create({
-          fromWallet: publicKey.toString(),
-          toCreatorWallet: creatorWallet,
-          amountUSDC: amount,
-          transactionSignature: signature,
-          message: message || undefined,
-        });
-        console.log('Tip recorded successfully:', response.data);
-      } catch (apiError) {
-        console.error('Error recording tip in backend:', apiError);
-        toast.error('Tip sent but failed to record in database. Please contact support.');
+      // Simple direct API call - no complex verification
+      const tipData = {
+        fromWallet: publicKey.toString(),
+        toCreatorWallet: creatorWallet,
+        amountUSDC: amount,
+        transactionSignature: signature,
+        message: message || '',
+      };
+      
+      console.log('Sending tip data to backend:', tipData);
+      
+      const response = await fetch('/api/tips', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tipData),
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Tip recorded successfully:', result);
+        toast.success(`Tip of $${amount} USDC recorded!`);
+      } else {
+        const error = await response.json();
+        console.error('❌ Failed to record tip:', error);
+        toast.error(`Tip sent but recording failed: ${error.error || 'Unknown error'}`);
       }
 
       toast.success(`Successfully sent ${amount} USDC to ${creatorName}!`, { id: toastId });
