@@ -160,7 +160,8 @@ router.get('/:walletAddress/dashboard', async (req: Request, res: Response) => {
       tipsCount: tips.length,
       totalTips: totalTipsAgg._sum.amountUSDC,
       subscriptionsCount: activeSubscriptions.length,
-      monthlyRevenue: monthlyRecurringRevenue
+      monthlyRevenue: monthlyRecurringRevenue,
+      tips: tips.map(t => ({ id: t.id, amount: t.amountUSDC, status: t.status, from: t.fromWallet }))
     });
 
     res.json({

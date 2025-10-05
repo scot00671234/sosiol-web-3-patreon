@@ -74,13 +74,21 @@ export async function verifyTransaction(
       return true;
     }
 
-    // In a production environment, you would:
+    // For regular payments, check if transaction has any token transfers
+    if (tx.meta?.preTokenBalances && tx.meta?.postTokenBalances) {
+      console.log('Transaction has token transfers, verifying...');
+      // For now, if transaction exists and is confirmed, accept it
+      // In production, you'd parse the token transfers to verify USDC amount
+      return true;
+    }
+
+    // For MVP testing, accept any confirmed transaction
+    // In production, you would:
     // 1. Parse the transaction to find USDC token transfers
     // 2. Verify the amount matches (accounting for decimals - USDC has 6 decimals)
     // 3. Verify sender and recipient addresses
-    // For MVP, we're doing basic validation
     
-    console.log('Transaction verified:', signature);
+    console.log('Transaction verified (MVP mode):', signature);
     return true;
   } catch (error) {
     console.error('Error verifying transaction:', error);

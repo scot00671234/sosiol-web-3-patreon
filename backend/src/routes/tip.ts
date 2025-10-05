@@ -39,6 +39,7 @@ router.post('/',
 
       // Verify transaction on Solana
       console.log(`Verifying tip transaction: ${transactionSignature}`);
+      console.log(`From: ${fromWallet}, To: ${toCreatorWallet}, Amount: ${amountUSDC}`);
       const isValid = await verifyTransaction(transactionSignature, fromWallet, toCreatorWallet, amountUSDC);
       console.log(`Tip verification result: ${isValid}`);
       
@@ -53,7 +54,7 @@ router.post('/',
         }
       });
       
-      console.log(`Tip created with status: ${tip.status}`);
+      console.log(`Tip created with status: ${tip.status}, ID: ${tip.id}`);
 
       // Update creator stats
       if (isValid) {
