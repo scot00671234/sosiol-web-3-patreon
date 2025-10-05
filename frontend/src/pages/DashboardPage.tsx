@@ -49,20 +49,6 @@ const DashboardPage: FC = () => {
     }
   };
 
-  // Debug function to check database state
-  const debugDatabase = async () => {
-    if (!publicKey) return;
-    
-    try {
-      const response = await fetch(`/api/creator/${publicKey.toString()}/debug`);
-      const data = await response.json();
-      console.log('Debug data:', data);
-      toast.success('Debug data logged to console');
-    } catch (error) {
-      console.error('Error fetching debug data:', error);
-      toast.error('Failed to fetch debug data');
-    }
-  };
 
   // Expose refresh function globally for payment success callbacks
   useEffect(() => {
@@ -481,12 +467,6 @@ const DashboardPage: FC = () => {
           >
             <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
-          </button>
-          <button
-            onClick={debugDatabase}
-            className="btn btn-secondary flex items-center space-x-2"
-          >
-            <span>Debug</span>
           </button>
           <button
             onClick={() => setIsEditingProfile(true)}

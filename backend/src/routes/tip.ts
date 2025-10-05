@@ -30,7 +30,9 @@ router.post('/',
       }
 
       // Verify transaction on Solana
+      console.log(`Verifying tip transaction: ${transactionSignature}`);
       const isValid = await verifyTransaction(transactionSignature, fromWallet, toCreatorWallet, amountUSDC);
+      console.log(`Tip verification result: ${isValid}`);
       
       const tip = await prisma.tip.create({
         data: {
@@ -42,6 +44,8 @@ router.post('/',
           status: isValid ? 'completed' : 'pending',
         }
       });
+      
+      console.log(`Tip created with status: ${tip.status}`);
 
       // Update creator stats
       if (isValid) {

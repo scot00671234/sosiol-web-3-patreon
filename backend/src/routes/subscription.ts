@@ -34,8 +34,12 @@ router.post('/',
       }
 
       // Verify transaction
+      console.log(`Verifying subscription transaction: ${transactionSignature}`);
       const isValid = await verifyTransaction(transactionSignature, fanWallet, creatorWallet, tier.priceUSDC);
+      console.log(`Subscription verification result: ${isValid}`);
+      
       if (!isValid) {
+        console.log('Subscription transaction verification failed');
         return res.status(400).json({ error: 'Invalid transaction' });
       }
 
