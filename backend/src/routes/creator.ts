@@ -192,5 +192,46 @@ router.get('/:walletAddress/dashboard', async (req: Request, res: Response) => {
   }
 });
 
+// Cleanup endpoint to remove self-payment records
+router.post('/:walletAddress/cleanup', async (req: Request, res: Response) => {
+  try {
+    const { walletAddress } = req.params;
+
+    // Remove self-payment tips
+    const deletedTips = await prisma.tip.deleteMany({
+      where: {
+        fromWallet: walletAddress,
+        toCreatorWallet: walletAddress,
+      }
+    });
+
+    // Remove self-subscriptions
+    const deletedSubscriptions = await prisma.subscription.deleteMany({
+      where: {
+        fanWallet: walletAddress,
+        creatorWallet: walletAddress,
+      }
+    });
+
+    // Reset creator stats
+    await prisma.creator.update({
+      where: { walletAddress },
+      data: {
+        totalTipsReceived: 0,
+        totalSubscribers: 0,
+      }
+    });
+
+    res.json({
+      message: 'Self-payment records cleaned up',
+      deletedTips: deletedTips.count,
+      deletedSubscriptions: deletedSubscriptions.count,
+    });
+  } catch (error) {
+    console.error('Error cleaning up self-payments:', error);
+    res.status(500).json({ error: 'Failed to cleanup self-payments' });
+  }
+});
+
 export default router;
 

@@ -49,6 +49,24 @@ const DashboardPage: FC = () => {
     }
   };
 
+  // Cleanup function to remove self-payment records
+  const cleanupSelfPayments = async () => {
+    if (!publicKey) return;
+    
+    try {
+      const response = await fetch(`/api/creator/${publicKey.toString()}/cleanup`, {
+        method: 'POST',
+      });
+      const data = await response.json();
+      console.log('Cleanup result:', data);
+      toast.success(`Cleaned up ${data.deletedTips} tips and ${data.deletedSubscriptions} subscriptions`);
+      loadDashboard(); // Refresh dashboard after cleanup
+    } catch (error) {
+      console.error('Error cleaning up self-payments:', error);
+      toast.error('Failed to cleanup self-payments');
+    }
+  };
+
 
   // Expose refresh function globally for payment success callbacks
   useEffect(() => {
@@ -469,12 +487,35 @@ const DashboardPage: FC = () => {
             <span>Refresh</span>
           </button>
           <button
+            onClick={cleanupSelfPayments}
+            className="btn btn-secondary flex items-center space-x-2"
+          >
+            <span>Cleanup</span>
+          </button>
+          <button
             onClick={() => setIsEditingProfile(true)}
             className="btn btn-secondary flex items-center space-x-2"
           >
             <Settings className="h-5 w-5" />
             <span>Edit Profile</span>
           </button>
+        </div>
+      </div>
+
+      {/* Info Banner */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center">
+          <div className="flex-shrink-0">
+            <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-blue-700">
+              <strong>Testing Tips:</strong> To test the tip system, you need to use a different wallet address. 
+              Self-payments (sending to yourself) are not allowed and won't be recorded as tips.
+            </p>
+          </div>
         </div>
       </div>
 

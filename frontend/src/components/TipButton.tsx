@@ -79,7 +79,8 @@ const TipButton: FC<TipButtonProps> = ({ creatorWallet, creatorName, onSuccess }
       }
     } catch (error: any) {
       console.error('Error sending tip:', error);
-      toast.error(error.message || 'Failed to send tip', { id: toastId });
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to send tip';
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);
     }

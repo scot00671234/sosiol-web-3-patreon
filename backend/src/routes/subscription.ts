@@ -22,6 +22,14 @@ router.post('/',
 
       const { fanWallet, creatorWallet, tierId, transactionSignature } = req.body;
 
+      // Prevent self-subscriptions
+      if (fanWallet === creatorWallet) {
+        console.log('Self-subscription detected, not allowing');
+        return res.status(400).json({ 
+          error: 'Cannot subscribe to yourself. Subscriptions must be to different wallet addresses.' 
+        });
+      }
+
       // Get creator and tier info
       const creator = await prisma.creator.findUnique({ where: { walletAddress: creatorWallet } });
       if (!creator) {

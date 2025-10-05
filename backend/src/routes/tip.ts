@@ -23,6 +23,14 @@ router.post('/',
 
       const { fromWallet, toCreatorWallet, amountUSDC, transactionSignature, message } = req.body;
 
+      // Prevent self-payments from being recorded as tips
+      if (fromWallet === toCreatorWallet) {
+        console.log('Self-payment detected, not recording as tip');
+        return res.status(400).json({ 
+          error: 'Cannot send tips to yourself. Tips must be sent to different wallet addresses.' 
+        });
+      }
+
       // Check if tip already exists
       const existingTip = await prisma.tip.findUnique({ where: { transactionSignature } });
       if (existingTip) {

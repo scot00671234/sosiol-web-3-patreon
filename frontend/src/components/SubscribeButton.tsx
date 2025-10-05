@@ -82,7 +82,8 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
       }
     } catch (error: any) {
       console.error('Error subscribing:', error);
-      toast.error(error.message || 'Failed to subscribe', { id: toastId });
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to subscribe';
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);
     }
