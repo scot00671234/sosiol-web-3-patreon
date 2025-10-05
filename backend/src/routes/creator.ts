@@ -152,9 +152,15 @@ router.get('/:walletAddress/dashboard', async (req: Request, res: Response) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    const totalSubscriptionRevenue = await prisma.subscription.aggregate({
-      _sum: { priceUSDC: true },
-      where: { creatorWallet: walletAddress, status: 'active' },
+    // Calculate monthly recurring revenue (sum of all active subscription prices)
+    const monthlyRecurringRevenue = activeSubscriptions.reduce((sum, sub) => sum + sub.priceUSDC, 0);
+
+    // Debug logging
+    console.log(`Dashboard data for ${walletAddress}:`, {
+      tipsCount: tips.length,
+      totalTips: totalTipsAgg._sum.amountUSDC,
+      subscriptionsCount: activeSubscriptions.length,
+      monthlyRevenue: monthlyRecurringRevenue
     });
 
     res.json({
@@ -166,7 +172,7 @@ router.get('/:walletAddress/dashboard', async (req: Request, res: Response) => {
       stats: {
         totalTipsReceived: totalTipsAgg._sum.amountUSDC || 0,
         totalSubscribers: activeSubscriptions.length,
-        monthlyRecurringRevenue: totalSubscriptionRevenue._sum.priceUSDC || 0
+        monthlyRecurringRevenue: monthlyRecurringRevenue
       },
       recentTips: tips,
       activeSubscriptions: activeSubscriptions.map(sub => ({
@@ -183,6 +189,51 @@ router.get('/:walletAddress/dashboard', async (req: Request, res: Response) => {
       error: 'Failed to fetch dashboard',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
+  }
+});
+
+// Debug endpoint to check database state
+router.get('/:walletAddress/debug', async (req: Request, res: Response) => {
+  try {
+    const { walletAddress } = req.params;
+
+    const creator = await prisma.creator.findUnique({ where: { walletAddress } });
+    if (!creator) {
+      return res.status(404).json({ error: 'Creator not found' });
+    }
+
+    const tips = await prisma.tip.findMany({
+      where: { toCreatorWallet: walletAddress },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const subscriptions = await prisma.subscription.findMany({
+      where: { creatorWallet: walletAddress },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.json({
+      creator: {
+        walletAddress: creator.walletAddress,
+        totalTipsReceived: creator.totalTipsReceived,
+        totalSubscribers: creator.totalSubscribers,
+      },
+      tips: tips.map(tip => ({
+        id: tip.id,
+        amountUSDC: tip.amountUSDC,
+        status: tip.status,
+        createdAt: tip.createdAt,
+      })),
+      subscriptions: subscriptions.map(sub => ({
+        id: sub.id,
+        priceUSDC: sub.priceUSDC,
+        status: sub.status,
+        createdAt: sub.createdAt,
+      })),
+    });
+  } catch (error) {
+    console.error('Error fetching debug data:', error);
+    res.status(500).json({ error: 'Failed to fetch debug data' });
   }
 });
 

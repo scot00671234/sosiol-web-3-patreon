@@ -77,10 +77,12 @@ router.post('/',
       });
 
       // Update creator stats
+      console.log(`Updating creator stats for ${creatorWallet}: incrementing totalSubscribers`);
       await prisma.creator.update({
         where: { walletAddress: creatorWallet },
         data: { totalSubscribers: { increment: 1 } }
       });
+      console.log(`Successfully updated creator stats for ${creatorWallet}`);
 
       res.status(201).json(subscription);
     } catch (error) {

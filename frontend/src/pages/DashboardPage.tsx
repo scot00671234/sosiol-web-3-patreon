@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Loader2, Users, DollarSign, TrendingUp, Settings, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Users, DollarSign, TrendingUp, Settings, Plus, Trash2, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { creatorAPI } from '../utils/api';
 import { uploadAPI } from '../utils/uploadAPI';
@@ -42,6 +42,36 @@ const DashboardPage: FC = () => {
     }
   }, [publicKey]);
 
+  // Add refresh function that can be called from other components
+  const refreshDashboard = () => {
+    if (publicKey) {
+      loadDashboard();
+    }
+  };
+
+  // Debug function to check database state
+  const debugDatabase = async () => {
+    if (!publicKey) return;
+    
+    try {
+      const response = await fetch(`/api/creator/${publicKey.toString()}/debug`);
+      const data = await response.json();
+      console.log('Debug data:', data);
+      toast.success('Debug data logged to console');
+    } catch (error) {
+      console.error('Error fetching debug data:', error);
+      toast.error('Failed to fetch debug data');
+    }
+  };
+
+  // Expose refresh function globally for payment success callbacks
+  useEffect(() => {
+    (window as any).refreshDashboard = refreshDashboard;
+    return () => {
+      delete (window as any).refreshDashboard;
+    };
+  }, [publicKey]);
+
   const loadDashboard = async () => {
     if (!publicKey) return;
 
@@ -55,6 +85,7 @@ const DashboardPage: FC = () => {
         
         // Load dashboard
         const dashboardResponse = await creatorAPI.getDashboard(publicKey.toString());
+        console.log('Dashboard data received:', dashboardResponse.data);
         setDashboardData(dashboardResponse.data);
         
         // Populate form
@@ -442,13 +473,29 @@ const DashboardPage: FC = () => {
             Welcome back, {dashboardData.creator.displayName}!
           </p>
         </div>
-        <button
-          onClick={() => setIsEditingProfile(true)}
-          className="btn btn-secondary flex items-center space-x-2"
-        >
-          <Settings className="h-5 w-5" />
-          <span>Edit Profile</span>
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={refreshDashboard}
+            className="btn btn-secondary flex items-center space-x-2"
+            disabled={loading}
+          >
+            <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </button>
+          <button
+            onClick={debugDatabase}
+            className="btn btn-secondary flex items-center space-x-2"
+          >
+            <span>Debug</span>
+          </button>
+          <button
+            onClick={() => setIsEditingProfile(true)}
+            className="btn btn-secondary flex items-center space-x-2"
+          >
+            <Settings className="h-5 w-5" />
+            <span>Edit Profile</span>
+          </button>
+        </div>
       </div>
 
       {/* Stats */}

@@ -58,16 +58,28 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
       await connection.confirmTransaction(signature, 'confirmed');
 
       // Create subscription in backend
+      console.log('Creating subscription in backend:', {
+        fanWallet: publicKey.toString(),
+        creatorWallet,
+        tierId: tier.id,
+        transactionSignature: signature,
+      });
       await subscriptionAPI.create({
         fanWallet: publicKey.toString(),
         creatorWallet,
         tierId: tier.id,
         transactionSignature: signature,
       });
+      console.log('Subscription created successfully');
 
       toast.success(`Successfully subscribed to ${tier.name}!`, { id: toastId });
       setIsOpen(false);
       onSuccess?.();
+      
+      // Refresh dashboard if available
+      if ((window as any).refreshDashboard) {
+        (window as any).refreshDashboard();
+      }
     } catch (error: any) {
       console.error('Error subscribing:', error);
       toast.error(error.message || 'Failed to subscribe', { id: toastId });

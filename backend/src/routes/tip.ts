@@ -45,10 +45,14 @@ router.post('/',
 
       // Update creator stats
       if (isValid) {
+        console.log(`Updating creator stats for ${toCreatorWallet}: adding ${amountUSDC} to totalTipsReceived`);
         await prisma.creator.update({
           where: { walletAddress: toCreatorWallet },
           data: { totalTipsReceived: { increment: amountUSDC } },
         });
+        console.log(`Successfully updated creator stats for ${toCreatorWallet}`);
+      } else {
+        console.log(`Tip verification failed for ${toCreatorWallet}, not updating stats`);
       }
 
       res.status(201).json(tip);

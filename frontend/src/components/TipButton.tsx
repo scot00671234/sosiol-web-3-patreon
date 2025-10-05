@@ -51,6 +51,13 @@ const TipButton: FC<TipButtonProps> = ({ creatorWallet, creatorName, onSuccess }
       await connection.confirmTransaction(signature, 'confirmed');
 
       // Record tip in backend
+      console.log('Recording tip in backend:', {
+        fromWallet: publicKey.toString(),
+        toCreatorWallet: creatorWallet,
+        amountUSDC: amount,
+        transactionSignature: signature,
+        message: message || undefined,
+      });
       await tipAPI.create({
         fromWallet: publicKey.toString(),
         toCreatorWallet: creatorWallet,
@@ -58,12 +65,18 @@ const TipButton: FC<TipButtonProps> = ({ creatorWallet, creatorName, onSuccess }
         transactionSignature: signature,
         message: message || undefined,
       });
+      console.log('Tip recorded successfully');
 
       toast.success(`Successfully sent ${amount} USDC to ${creatorName}!`, { id: toastId });
       setIsOpen(false);
       setCustomAmount('');
       setMessage('');
       onSuccess?.();
+      
+      // Refresh dashboard if available
+      if ((window as any).refreshDashboard) {
+        (window as any).refreshDashboard();
+      }
     } catch (error: any) {
       console.error('Error sending tip:', error);
       toast.error(error.message || 'Failed to send tip', { id: toastId });
