@@ -234,5 +234,63 @@ router.post('/:walletAddress/cleanup', async (req: Request, res: Response) => {
   }
 });
 
+// Get wallet balance and transaction history
+router.get('/:walletAddress/wallet-info', async (req: Request, res: Response) => {
+  try {
+    const { walletAddress } = req.params;
+    
+    // Get creator info
+    const creator = await prisma.creator.findUnique({ where: { walletAddress } });
+    if (!creator) {
+      return res.status(404).json({ error: 'Creator not found' });
+    }
+
+    // Get all tips received (both completed and pending)
+    const allTips = await prisma.tip.findMany({
+      where: { toCreatorWallet: walletAddress },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Calculate real totals from database
+    const totalTipsFromDB = allTips
+      .filter(tip => tip.status === 'completed')
+      .reduce((sum, tip) => sum + tip.amountUSDC, 0);
+
+    // Get active subscriptions
+    const activeSubscriptions = await prisma.subscription.findMany({
+      where: { creatorWallet: walletAddress, status: 'active' },
+    });
+
+    const monthlyRevenue = activeSubscriptions.reduce((sum, sub) => sum + sub.priceUSDC, 0);
+
+    res.json({
+      walletAddress,
+      totalTipsReceived: totalTipsFromDB,
+      totalSubscribers: activeSubscriptions.length,
+      monthlyRevenue,
+      recentTips: allTips.slice(0, 10).map(tip => ({
+        id: tip.id,
+        amountUSDC: tip.amountUSDC,
+        fromWallet: tip.fromWallet,
+        status: tip.status,
+        message: tip.message,
+        createdAt: tip.createdAt,
+        transactionSignature: tip.transactionSignature
+      })),
+      activeSubscriptions: activeSubscriptions.map(sub => ({
+        fanWallet: sub.fanWallet,
+        tierName: sub.tierName,
+        priceUSDC: sub.priceUSDC,
+        startDate: sub.startDate,
+        nextPaymentDate: sub.nextPaymentDate
+      })),
+      allTips: allTips // For debugging
+    });
+  } catch (error) {
+    console.error('Error fetching wallet info:', error);
+    res.status(500).json({ error: 'Failed to fetch wallet info' });
+  }
+});
+
 export default router;
 

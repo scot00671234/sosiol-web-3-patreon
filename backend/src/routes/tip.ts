@@ -43,8 +43,8 @@ router.post('/',
       const isValid = await verifyTransaction(transactionSignature, fromWallet, toCreatorWallet, amountUSDC);
       console.log(`Tip verification result: ${isValid}`);
       
-      // For testing, accept the tip even if verification fails
-      const finalIsValid = isValid || true; // Always accept for testing
+      // Use real verification result
+      const finalIsValid = isValid;
       console.log(`Final verification result: ${finalIsValid}`);
       
       const tip = await prisma.tip.create({

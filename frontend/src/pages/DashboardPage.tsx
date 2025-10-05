@@ -49,6 +49,21 @@ const DashboardPage: FC = () => {
     }
   };
 
+  // Check real wallet data
+  const checkWalletData = async () => {
+    if (!publicKey) return;
+    
+    try {
+      const response = await fetch(`/api/creators/${publicKey.toString()}/wallet-info`);
+      const data = await response.json();
+      console.log('Real wallet data:', data);
+      toast.success(`Real tips: $${data.totalTipsReceived}, Tips count: ${data.recentTips.length}`);
+    } catch (error) {
+      console.error('Error fetching wallet data:', error);
+      toast.error('Failed to fetch wallet data');
+    }
+  };
+
 
 
   // Expose refresh function globally for payment success callbacks
@@ -468,6 +483,12 @@ const DashboardPage: FC = () => {
           >
             <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
+          </button>
+          <button
+            onClick={checkWalletData}
+            className="btn btn-secondary flex items-center space-x-2"
+          >
+            <span>Check Wallet</span>
           </button>
           <button
             onClick={() => setIsEditingProfile(true)}
