@@ -64,13 +64,34 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
         tierId: tier.id,
         transactionSignature: signature,
       });
-      await subscriptionAPI.create({
+      
+      const subscriptionData = {
         fanWallet: publicKey.toString(),
         creatorWallet,
         tierId: tier.id,
         transactionSignature: signature,
+      };
+      
+      console.log('Sending subscription data:', subscriptionData);
+      
+      const response = await fetch('/api/subscriptions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(subscriptionData),
       });
-      console.log('Subscription created successfully');
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Subscription created successfully:', result);
+        toast.success(`Successfully subscribed to ${tier.name}!`);
+      } else {
+        const error = await response.json();
+        console.error('❌ Failed to create subscription:', error);
+        toast.error(`Subscription failed: ${error.error || 'Unknown error'}`);
+        throw new Error(error.error || 'Subscription failed');
+      }
 
       toast.success(`Successfully subscribed to ${tier.name}!`, { id: toastId });
       setIsOpen(false);

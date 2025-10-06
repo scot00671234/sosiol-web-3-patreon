@@ -77,6 +77,21 @@ const DashboardPage: FC = () => {
     }
   };
 
+  // Check subscription analytics
+  const checkSubscriptionAnalytics = async () => {
+    if (!publicKey) return;
+    
+    try {
+      const response = await fetch(`/api/subscriptions/analytics/${publicKey.toString()}`);
+      const data = await response.json();
+      console.log('📊 Subscription analytics:', data);
+      toast.success(`Subscribers: ${data.totalSubscribers}, Revenue: $${data.totalMonthlyRevenue}`);
+    } catch (error) {
+      console.error('Error fetching subscription analytics:', error);
+      toast.error('Failed to fetch subscription analytics');
+    }
+  };
+
 
 
 
@@ -514,6 +529,12 @@ const DashboardPage: FC = () => {
             className="btn btn-secondary flex items-center space-x-2"
           >
             <span>Check DB</span>
+          </button>
+          <button
+            onClick={checkSubscriptionAnalytics}
+            className="btn btn-secondary flex items-center space-x-2"
+          >
+            <span>Sub Analytics</span>
           </button>
           <button
             onClick={() => setIsEditingProfile(true)}
