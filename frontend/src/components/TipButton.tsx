@@ -4,7 +4,6 @@ import { PublicKey } from '@solana/web3.js';
 import { DollarSign, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { createUSDCTransferTransaction } from '../utils/solana';
-import { tipAPI } from '../utils/api';
 import { QUICK_TIP_AMOUNTS } from '../config/constants';
 
 interface TipButtonProps {
