@@ -87,9 +87,14 @@ const DashboardPage: FC = () => {
         const creator = response.data;
         
         // Load dashboard
+        console.log('🔍 Fetching dashboard data for wallet:', publicKey.toString());
         const dashboardResponse = await creatorAPI.getDashboard(publicKey.toString());
-        console.log('Dashboard data received:', dashboardResponse.data);
+        console.log('📊 Dashboard API response:', dashboardResponse);
+        console.log('📊 Dashboard data received:', dashboardResponse.data);
+        console.log('📊 Tips in response:', dashboardResponse.data?.recentTips);
+        console.log('📊 Total tips:', dashboardResponse.data?.stats?.totalTipsReceived);
         setDashboardData(dashboardResponse.data);
+        console.log('✅ Dashboard state updated');
         
         // Populate form
         setProfileForm({

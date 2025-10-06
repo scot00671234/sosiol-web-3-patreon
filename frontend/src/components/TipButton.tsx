@@ -81,6 +81,12 @@ const TipButton: FC<TipButtonProps> = ({ creatorWallet, creatorName, onSuccess }
         const result = await response.json();
         console.log('✅ Tip recorded successfully:', result);
         toast.success(`Tip of $${amount} USDC recorded!`);
+        
+        // Force refresh dashboard after successful tip recording
+        console.log('🔄 Refreshing dashboard after tip recording...');
+        if ((window as any).refreshDashboard) {
+          (window as any).refreshDashboard();
+        }
       } else {
         const error = await response.json();
         console.error('❌ Failed to record tip:', error);

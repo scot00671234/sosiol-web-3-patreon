@@ -156,13 +156,16 @@ router.get('/:walletAddress/dashboard', async (req: Request, res: Response) => {
     const monthlyRecurringRevenue = activeSubscriptions.reduce((sum, sub) => sum + sub.priceUSDC, 0);
 
     // Debug logging
-    console.log(`Dashboard data for ${walletAddress}:`, {
+    console.log(`🔍 Dashboard data for ${walletAddress}:`, {
       tipsCount: tips.length,
       totalTips: totalTipsAgg._sum.amountUSDC,
       subscriptionsCount: activeSubscriptions.length,
       monthlyRevenue: monthlyRecurringRevenue,
       tips: tips.map(t => ({ id: t.id, amount: t.amountUSDC, status: t.status, from: t.fromWallet }))
     });
+    
+    console.log(`📊 All tips in database for ${walletAddress}:`, tips);
+    console.log(`💰 Total tips calculation:`, totalTipsAgg);
 
     res.json({
       creator: {
