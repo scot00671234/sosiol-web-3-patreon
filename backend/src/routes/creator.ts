@@ -295,5 +295,32 @@ router.get('/:walletAddress/wallet-info', async (req: Request, res: Response) =>
   }
 });
 
+// Test endpoint to check all tips in database
+router.get('/debug/all-tips', async (req: Request, res: Response) => {
+  try {
+    const allTips = await prisma.tip.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    
+    console.log('🔍 All tips in database:', allTips);
+    
+    res.json({
+      totalTips: allTips.length,
+      tips: allTips.map(tip => ({
+        id: tip.id,
+        fromWallet: tip.fromWallet,
+        toCreatorWallet: tip.toCreatorWallet,
+        amountUSDC: tip.amountUSDC,
+        status: tip.status,
+        createdAt: tip.createdAt,
+        transactionSignature: tip.transactionSignature
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching all tips:', error);
+    res.status(500).json({ error: 'Failed to fetch tips' });
+  }
+});
+
 export default router;
 

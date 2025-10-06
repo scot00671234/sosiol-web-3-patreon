@@ -57,7 +57,15 @@ router.post('/',
         }
       });
       
-      console.log(`Tip created with status: ${tip.status}, ID: ${tip.id}`);
+      console.log(`✅ Tip created with status: ${tip.status}, ID: ${tip.id}`);
+      console.log(`✅ Tip details:`, {
+        id: tip.id,
+        fromWallet: tip.fromWallet,
+        toCreatorWallet: tip.toCreatorWallet,
+        amountUSDC: tip.amountUSDC,
+        status: tip.status,
+        createdAt: tip.createdAt
+      });
 
       // Update creator stats
       if (finalIsValid) {

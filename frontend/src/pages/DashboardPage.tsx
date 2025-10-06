@@ -64,6 +64,19 @@ const DashboardPage: FC = () => {
     }
   };
 
+  // Check all tips in database
+  const checkAllTips = async () => {
+    try {
+      const response = await fetch('/api/creators/debug/all-tips');
+      const data = await response.json();
+      console.log('🔍 All tips in database:', data);
+      toast.success(`Database has ${data.totalTips} tips total`);
+    } catch (error) {
+      console.error('Error fetching all tips:', error);
+      toast.error('Failed to fetch all tips');
+    }
+  };
+
 
 
 
@@ -495,6 +508,12 @@ const DashboardPage: FC = () => {
             className="btn btn-secondary flex items-center space-x-2"
           >
             <span>Check Wallet</span>
+          </button>
+          <button
+            onClick={checkAllTips}
+            className="btn btn-secondary flex items-center space-x-2"
+          >
+            <span>Check DB</span>
           </button>
           <button
             onClick={() => setIsEditingProfile(true)}
