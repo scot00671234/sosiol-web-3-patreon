@@ -96,7 +96,8 @@ const runMigration = async () => {
       );
     `;
     
-    if (subscriptionTableExists[0]?.exists) {
+    const tableExists = subscriptionTableExists[0]?.exists;
+    if (tableExists) {
       console.log('📋 Subscription table found, removing...');
       
       // Drop foreign key constraints first
