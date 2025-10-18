@@ -1,0 +1,10 @@
+﻿node_modules/
+dist/
+build/
+coverage/
+.env
+.env.local
+.prisma/
+.prisma/client/
+prisma/dev.db
+.DS_Store

@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Creator {
+  id                  Int       @id @default(autoincrement())
+  walletAddress       String    @unique
+  username            String    @unique
+  displayName         String
+  bio                 String    @default("")
+  avatarUrl           String    @default("")
+  coverImageUrl       String    @default("")
+  totalTipsReceived   Float     @default(0)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  tipsReceived        Tip[]     @relation("CreatorTips")
+}
+
+model Tip {
+  id                     Int       @id @default(autoincrement())
+  fromWallet             String
+  toCreatorWallet        String
+  amountUSDC             Float
+  transactionSignature   String    @unique
+  message                String?
+  status                 TipStatus @default(pending)
+  createdAt              DateTime  @default(now())
+
+  creator                Creator?  @relation("CreatorTips", fields: [toCreatorWallet], references: [walletAddress])
+}
+
+
+enum TipStatus {
+  pending
+  completed
+  failed
+}
+
+
+

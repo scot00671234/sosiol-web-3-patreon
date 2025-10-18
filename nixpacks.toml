@@ -1,0 +1,29 @@
+[phases.setup]
+nixPkgs = ["nodejs-18_x", "openssl", "python3", "gcc", "gnumake", "pkg-config", "libusb1"]
+aptPkgs = ["build-essential", "libudev-dev"]
+
+[phases.install]
+cmds = [
+  "cd backend && npm install",
+  "cd frontend && npm install --legacy-peer-deps"
+]
+
+[phases.build]
+cmds = [
+  "cd backend && npx prisma generate && npm run build",
+  "cd frontend && rm -rf dist && VITE_API_URL=https://sosiol.com/api VITE_SOLANA_NETWORK=mainnet-beta VITE_SOLANA_RPC_URL=https://solana-mainnet.g.alchemy.com/v2/demo VITE_USDC_MINT=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v npm run build",
+  "mkdir -p public && cp -r frontend/dist/* public/",
+  "mkdir -p uploads",
+  "echo 'Directory structure after build:' && ls -la && echo 'Public directory contents:' && ls -la public/",
+  "echo 'Checking built files for API URL:' && grep -r 'localhost:5000' public/ || echo 'No localhost references found'"
+]
+
+[start]
+cmd = "cd backend && npx prisma migrate deploy && npm start"
+
+[variables]
+NODE_ENV = "production"
+CORS_ORIGIN = "https://sosiol.com"
+DATABASE_URL = "postgresql://postgres:postgres@lynxier-database-sdlorl:5432/postgres?schema=public"
+SOLANA_RPC_URL = "https://solana-mainnet.g.alchemy.com/v2/demo"
+
