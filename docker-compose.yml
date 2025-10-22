@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sosiol-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sosiol
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sosiol-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sosiol-backend
+    restart: unless-stopped
+    ports:
+      - "5000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/sosiol?schema=public
+      - SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
+      - SOLANA_NETWORK=mainnet-beta
+      - USDC_MINT_ADDRESS=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+      - CORS_ORIGIN=*
+    depends_on:
+      - postgres
+    networks:
+      - sosiol-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  sosiol-network:
+    driver: bridge
+
